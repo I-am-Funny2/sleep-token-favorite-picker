@@ -17,14 +17,21 @@ https://i-am-funny2.github.io/sleep-token-favorite-picker/
 - Copy results to the clipboard
 - Final ranked favorites list
 - Responsive desktop and mobile layout
+- Copy a share code to transfer ranking progress through chat or messaging
+- Import a share code to resume another ranking state
 
 ## Save & Transfer
 
 Ranking progress is saved automatically in your browser.
 
-You can also export your current ranking as a JSON save file and import it later to continue the same run, including on another browser or device.
+There are two ways to move or back up a ranking:
 
-Importing a save replaces the ranking progress currently stored in that browser.
+- **Export Save / Import Save** — downloads or restores a JSON save file.
+- **Copy Share Code / Import Share Code** — copies the current ranking state as a compact text code that can be sent through chat, Discord, or another messaging service.
+
+Both methods restore the ranking session itself, including current progress and unresolved comparisons.
+
+Importing a save or share code replaces the ranking progress currently stored in that browser.
 
 ## Included Releases
 
