@@ -1,0 +1,505 @@
+body {
+    background: #101014;
+    color: #eeeeee;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    margin: 0;
+    padding: 10px;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: 0;
+    border-radius: 6px;
+    padding: 8px 14px;
+    background: #2c2c34;
+    color: #eeeeee;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #41414c;
+}
+
+button.disabled,
+button.disabled:hover {
+    background: #DDD;
+    color: #888;
+    cursor: not-allowed;
+}
+
+#container {
+    margin-left: -10px;
+    margin-right: -10px;
+    padding: 10px;
+}
+
+@media (min-width: 1024px) {
+    #container {
+        display: grid;
+        grid-template-columns: 636px minmax(0, 1fr);
+        column-gap: 10px;
+    }
+}
+
+@media (min-width: 1300px) {
+    #container {
+        grid-template-columns: 50% 49%;
+        column-gap: 1%;
+    }
+}
+
+#pick {
+    background: #536dfe;
+    color: #FFF;
+    font-size: larger;
+    width: 6em;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#pick:hover {
+    background: #7185ff;
+}
+
+#pick.disabled,
+#pick.disabled:hover {
+    background: #ACF;
+}
+
+#evaluating {
+    margin: auto;
+}
+
+#buttons {
+    margin: 30px auto 0;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+}
+
+#evaluating li.notice {
+    width: auto;
+    height: auto;
+    max-width: 260px;
+    margin: auto;
+    padding: 24px 28px;
+
+    background: #181818;
+    color: #eeeeee;
+    border: 1px solid #34343d;
+    border-radius: 10px;
+
+    text-align: center;
+    line-height: 1.4;
+    cursor: auto;
+    font-size: 10pt;
+}
+
+.item-list {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.item-list li {
+    width: 200px;
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #181818;
+    box-sizing: border-box;
+}
+
+.song-image-wrap {
+    width: 100%;
+    height: 194px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+    background:
+        radial-gradient(circle at center 65%, #303030 0%, #181818 50%, #0d0d0d 100%);
+}
+
+.item-list li img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transform-origin: center bottom;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45));
+}
+
+.song-name {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px 2px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.1;
+    text-align: center;
+    background: #222;
+    box-sizing: border-box;
+}
+
+.song-album {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px 5px;
+    color: #a9a9b2;
+    font-size: 10px;
+    line-height: 1.1;
+    text-align: center;
+    background: #222;
+    box-sizing: border-box;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    #evaluating li:hover img {
+        filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.6));
+    }
+
+    #evaluating li:hover {
+        border-color: #CDF;
+    }
+}
+
+#evaluating li.selected {
+    border-color: #ffcc00;
+}
+
+.site-header {
+    max-width: 900px;
+    margin: 0 auto 24px;
+    text-align: center;
+}
+
+.site-header h1 {
+    margin-bottom: 8px;
+    font-size: 30px;
+}
+
+.site-header p {
+    color: #bdbdc7;
+    line-height: 1.5;
+}
+
+.picker-help {
+    color: #a9a9b2;
+    font-size: 12px;
+}
+
+#progress {
+    color: #ffcc00;
+    font-weight: bold;
+}
+
+#ranking-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+#copy-status {
+    color: #bdbdc7;
+    font-size: 12px;
+}
+
+.site-footer {
+    max-width: 900px;
+    margin: 40px auto 10px;
+    padding: 18px 16px 0;
+    border-top: 1px solid #2f2f38;
+
+    color: #8f8f99;
+    font-size: 11px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.site-footer p {
+    margin: 4px 0;
+}
+
+.site-footer a {
+    color: #bdbdc7;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: #ffcc00;
+}
+
+#favorites {
+    gap: 8px;
+    counter-reset: favorite-rank;
+}
+
+#favorites li {
+    width: 120px;
+    height: 200px;
+    border-radius: 8px;
+    counter-increment: favorite-rank;
+    position: relative;
+    cursor: default;
+}
+
+#favorites .song-name {
+    height: 35px;
+    padding: 3px 4px;
+    font-size: 11px;
+}
+
+#favorites .song-image-wrap {
+    height: 165px;
+}
+
+/* Ranking number on Found Favorites cards */
+#favorites li::before {
+    content: "#" counter(favorite-rank);
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 5;
+
+    padding: 3px 6px;
+    border-radius: 5px;
+
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffcc00;
+
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+/* Mobile layout */
+
+@media (max-width: 636px) {
+    .site-header h1 {
+        font-size: 24px;
+    }
+
+    #container {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
+    }
+
+    #evaluating {
+        gap: 8px;
+    }
+
+    #evaluating li {
+        width: 160px;
+        height: 280px;
+    }
+
+    #evaluating .song-image-wrap {
+        height: 235px;
+    }
+
+    #evaluating .song-name {
+        height: 45px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 423px) {
+    #evaluating li {
+        width: 145px;
+        height: 255px;
+    }
+
+    #evaluating .song-image-wrap {
+        height: 215px;
+    }
+
+    #evaluating .song-name {
+        height: 40px;
+        font-size: 11px;
+    }
+
+    #buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+    }
+
+    #buttons button {
+        margin: 0;
+    }
+}
+
+/* Sleep Token card sizing cleanup */
+
+#favorites li {
+    width: 130px;
+    height: auto;
+}
+
+#favorites .song-image-wrap {
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+#favorites .song-name {
+    height: 36px;
+    padding: 3px 5px;
+    font-size: 11px;
+}
+
+#favorites .song-album {
+    height: 28px;
+    padding: 2px 4px 4px;
+    font-size: 9px;
+}
+
+/* Mobile Sleep Token cards */
+@media (max-width: 636px) {
+    #evaluating li {
+        width: 160px;
+        height: auto;
+    }
+
+    #evaluating .song-image-wrap {
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    #evaluating .song-name {
+        height: 36px;
+        font-size: 12px;
+    }
+
+    #evaluating .song-album {
+        height: 28px;
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 423px) {
+    #evaluating li {
+        width: 145px;
+        height: auto;
+    }
+
+    #evaluating .song-image-wrap {
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    #evaluating .song-name {
+        height: 36px;
+        font-size: 11px;
+    }
+
+    #evaluating .song-album {
+        height: 28px;
+        font-size: 9px;
+    }
+}
+
+/* Sleep Token visual theme */
+
+body {
+    background: #0b0b0e;
+    color: #e8e5df;
+}
+
+h1,
+h2 {
+    color: #e8e5df;
+}
+
+#progress {
+    color: #c8b98a;
+}
+
+button {
+    border-radius: 4px;
+}
+
+#pick {
+    background: #d6d0c3;
+    color: #111114;
+}
+
+#pick:hover {
+    background: #eee9df;
+}
+
+.item-list li {
+    background: #18181b;
+    border-color: #2b2b30;
+}
+
+.song-name,
+.song-album {
+    background: #18181b;
+}
+
+.song-name {
+    color: #f1eee8;
+}
+
+.song-album {
+    color: #9d9991;
+}
+
+.rank {
+    background: #c8b98a;
+    color: #111114;
+}
+
+/* Final Sleep Token theme overrides */
+
+/* Disabled buttons */
+button.disabled,
+button.disabled:hover {
+    background: #242428;
+    color: #66666e;
+    cursor: not-allowed;
+}
+
+/* Hovering over a song */
+@media (hover: hover) and (pointer: fine) {
+    #evaluating li:hover {
+        border-color: #77736b;
+    }
+}
+
+/* Selected song */
+#evaluating li.selected {
+    border-color: #c8b98a;
+    box-shadow: 0 0 0 1px rgba(200, 185, 138, 0.25);
+}
+
+/* Ranking number badges */
+#favorites li::before {
+    background: rgba(11, 11, 14, 0.9);
+    color: #c8b98a;
+    border: 1px solid #665f4b;
+}

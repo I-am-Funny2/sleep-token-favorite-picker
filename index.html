@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sleep Token Song Ranker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+    <h1>Sleep Token Song Ranker</h1>
+    
+    <p>
+        Select one or more songs you prefer, then press <strong>Pick</strong>.
+        Choose <strong>Pass</strong> if you cannot decide between the current options.
+    </p>
+    
+    <p class="picker-help">
+        Your favorites will be ranked as you progress. Use <strong>Undo</strong> or <strong>Redo</strong> to correct previous choices.
+    </p>
+    
+    <p id="progress"></p>
+</header>
+
+<div id="container">
+
+<div id="picking">
+<ul id="evaluating" class="item-list">
+</ul>
+
+<p id="buttons">
+    <button id="pick">Pick</button>
+    <button id="pass">Pass</button>
+    <button id="undo">Undo</button>
+    <button id="redo">Redo</button>
+    <button id="reset">Reset</button>
+</p>
+</div>
+
+<div id="secondary">
+<h2>Found favorites</h2>
+
+<div id="ranking-actions">
+    <button id="copy-ranking" class="disabled" disabled>Copy Ranking</button>
+    <span id="copy-status" aria-live="polite"></span>
+</div>
+
+<ol id="favorites" class="item-list">
+</ol>
+</div>
+</div>
+
+<footer class="site-footer">
+    <p>
+    Unofficial fan-made project. Not affiliated with, sponsored by, or endorsed by Sleep Token or their record labels.
+</p>
+<p>
+    Sleep Token names, music, artwork, and related intellectual property belong to their respective rights holders.
+</p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="picker.js"></script>
+<script src="picker-ui.js"></script>
+<script src="sleep-token-data.js"></script>
+<script>
+'use strict';
+
+var myPicker = new picker.Picker({
+    items: items,
+    localStorageKey: 'sleep-token-song-ranker-state-v1',
+    historyLength: 50,
+
+    defaultSettings: {
+        minBatchSize: 2,
+        maxBatchSize: 8
+    }
+});
+
+var pickerUI = new PickerUI(myPicker, {
+    elements: {
+        pick: '#pick',
+        pass: '#pass',
+        undo: '#undo',
+        redo: '#redo',
+        reset: '#reset',
+        evaluating: '#evaluating',
+        favorites: '#favorites'
+    },
+
+    onUpdate: function() {
+
+    var ranked = this.picker.getFavorites().length;
+    var total = items.length;
+
+    $('#progress').text(
+        ranked + ' of ' + total + ' songs ranked'
+    );
+
+    $('#copy-ranking')
+        .prop('disabled', ranked === 0)
+        .toggleClass('disabled', ranked === 0);
+},
+
+    getItemElem: function(item, settings) {
+    var card = $('<li></li>');
+
+    if (item.image) {
+        var imageWrap = $('<div></div>')
+            .addClass('song-image-wrap');
+
+        var image = $('<img>')
+            .attr('loading', 'lazy')
+            .attr('decoding', 'async')
+            .attr('src', item.image)
+            .attr('alt', item.name);
+
+        imageWrap.append(image);
+        card.append(imageWrap);
+    }
+
+    var name = $('<div></div>')
+        .addClass('song-name')
+        .text(item.name);
+
+    var album = $('<div></div>')
+        .addClass('song-album')
+        .text(item.album);
+
+    card.append(name);
+    card.append(album);
+
+    return card;
+}
+});
+
+pickerUI.initialize();
+
+function buildRankingText() {
+    var favorites = myPicker.getFavorites();
+    var lines = ['Sleep Token Song Ranking', ''];
+
+    $.each(favorites, function(index, item) {
+        lines.push((index + 1) + '. ' + item.name);
+    });
+
+    return lines.join('\n');
+}
+
+function copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    }
+
+    return new Promise(function(resolve, reject) {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+            var successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            if (successful) {
+                resolve();
+            } else {
+                reject();
+            }
+        } catch (error) {
+            document.body.removeChild(textarea);
+            reject(error);
+        }
+    });
+}
+
+$('#copy-ranking').on('click', function() {
+    var favorites = myPicker.getFavorites();
+
+    if (favorites.length === 0) {
+        return;
+    }
+
+    copyTextToClipboard(buildRankingText())
+        .then(function() {
+            $('#copy-status').text('Copied!');
+
+            setTimeout(function() {
+                $('#copy-status').text('');
+            }, 1500);
+        })
+        .catch(function() {
+            $('#copy-status').text('Copy failed');
+        });
+});
+
+</script>
+</body>
+</html>
