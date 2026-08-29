@@ -1,6 +1,6 @@
 # Sleep Token Song Ranker
 
-A fan-made favorite picker for ranking Sleep Token songs through repeated head-to-head choices.
+A fan-made favorite picker for ranking Sleep Token songs through repeated preference choices.
 
 **Live site:**  
 https://i-am-funny2.github.io/sleep-token-favorite-picker/
