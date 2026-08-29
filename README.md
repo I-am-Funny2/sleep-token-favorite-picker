@@ -12,9 +12,19 @@ https://i-am-funny2.github.io/sleep-token-favorite-picker/
 - Pick or pass between randomly presented songs
 - Undo and redo previous choices
 - Ranking progress saved automatically in the browser
+- Export ranking progress as a save file
+- Import a save file to resume a ranking
+- Copy results to the clipboard
 - Final ranked favorites list
-- Copy results to clipboard
 - Responsive desktop and mobile layout
+
+## Save & Transfer
+
+Ranking progress is saved automatically in your browser.
+
+You can also export your current ranking as a JSON save file and import it later to continue the same run, including on another browser or device.
+
+Importing a save replaces the ranking progress currently stored in that browser.
 
 ## Included Releases
 
