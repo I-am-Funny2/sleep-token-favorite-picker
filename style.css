@@ -503,3 +503,84 @@ button.disabled:hover {
     color: #c8b98a;
     border: 1px solid #665f4b;
 }
+
+/* Results and save management */
+
+#ranking-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.results-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#save-management {
+    width: 100%;
+    max-width: 540px;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background: #111114;
+    border: 1px solid #2b2b30;
+    border-radius: 6px;
+}
+
+.save-management-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 10px;
+}
+
+.save-management-title {
+    color: #e8e5df;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.save-management-help {
+    color: #8f8f99;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.save-management-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#export-save,
+#import-save {
+    background: #242428;
+    color: #e8e5df;
+    border: 1px solid #3b3b42;
+}
+
+#export-save:hover,
+#import-save:hover {
+    background: #333338;
+    border-color: #77736b;
+}
+
+#save-status {
+    color: #bdbdc7;
+    font-size: 12px;
+}
+
+@media (max-width: 636px) {
+    #save-management {
+        max-width: none;
+    }
+
+    .save-management-actions button {
+        flex: 1 1 130px;
+    }
+}

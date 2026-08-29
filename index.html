@@ -41,19 +41,33 @@
 
 <div id="ranking-actions">
 
-<button id="copy-ranking" class="disabled" disabled>Copy Results</button>
-<button id="export-save">Export Save</button>
-<button id="import-save">Import Save</button>
+    <div class="results-actions">
+        <button id="copy-ranking" class="disabled" disabled>Copy Results</button>
+        <span id="copy-status" aria-live="polite"></span>
+    </div>
 
-<input
-    type="file"
-    id="import-save-file"
-    accept=".json,application/json"
-    hidden
->
+    <div id="save-management">
+        <div class="save-management-text">
+            <span class="save-management-title">Save &amp; Transfer</span>
+            <span class="save-management-help">
+                Back up your current run or continue it on another device.
+            </span>
+        </div>
 
-<span id="copy-status" aria-live="polite"></span>
-<span id="save-status" aria-live="polite"></span>
+        <div class="save-management-actions">
+            <button id="export-save">Export Save</button>
+            <button id="import-save">Import Save</button>
+
+            <input
+                type="file"
+                id="import-save-file"
+                accept=".json,application/json"
+                hidden
+            >
+
+            <span id="save-status" aria-live="polite"></span>
+        </div>
+    </div>
 
 </div>
 
