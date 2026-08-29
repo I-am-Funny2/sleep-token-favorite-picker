@@ -13,7 +13,7 @@ https://i-am-funny2.github.io/sleep-token-favorite-picker/
 - Undo and redo previous choices
 - Ranking progress saved automatically in the browser
 - Final ranked favorites list
-- Copy ranking to clipboard
+- Copy results to clipboard
 - Responsive desktop and mobile layout
 
 ## Included Releases
