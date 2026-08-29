@@ -40,8 +40,21 @@
 <h2>Found favorites</h2>
 
 <div id="ranking-actions">
-    <button id="copy-ranking" class="disabled" disabled>Copy Ranking</button>
-    <span id="copy-status" aria-live="polite"></span>
+
+<button id="copy-ranking" class="disabled" disabled>Copy Ranking</button>
+<button id="export-save">Export Save</button>
+<button id="import-save">Import Save</button>
+
+<input
+    type="file"
+    id="import-save-file"
+    accept=".json,application/json"
+    hidden
+>
+
+<span id="copy-status" aria-live="polite"></span>
+<span id="save-status" aria-live="polite"></span>
+
 </div>
 
 <ol id="favorites" class="item-list">
@@ -195,6 +208,128 @@ $('#copy-ranking').on('click', function() {
         .catch(function() {
             $('#copy-status').text('Copy failed');
         });
+});
+
+var SAVE_KEY = 'sleep-token-song-ranker-state-v1';
+var SAVE_FORMAT = 'sleep-token-song-ranker-save';
+var SAVE_VERSION = 1;
+
+function setSaveStatus(message) {
+    $('#save-status').text(message);
+
+    setTimeout(function() {
+        $('#save-status').text('');
+    }, 2500);
+}
+
+function isValidImportedState(state) {
+    return (
+        state &&
+        typeof state === 'object' &&
+        Array.isArray(state.eliminated) &&
+        Array.isArray(state.survived) &&
+        Array.isArray(state.current) &&
+        Array.isArray(state.evaluating) &&
+        Array.isArray(state.favorites) &&
+        (!state.settings || typeof state.settings === 'object')
+    );
+}
+
+$('#export-save').on('click', function() {
+    try {
+        var savedState = localStorage.getItem(SAVE_KEY);
+
+        if (!savedState) {
+            setSaveStatus('No save found');
+            return;
+        }
+
+        var savePackage = {
+            format: SAVE_FORMAT,
+            version: SAVE_VERSION,
+            exportedAt: new Date().toISOString(),
+            state: JSON.parse(savedState)
+        };
+
+        var blob = new Blob(
+            [JSON.stringify(savePackage, null, 2)],
+            { type: 'application/json' }
+        );
+
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+
+        link.href = url;
+        link.download =
+            'sleep-token-song-ranker-save-' +
+            new Date().toISOString().slice(0, 10) +
+            '.json';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+
+        setSaveStatus('Save exported');
+    } catch (error) {
+        console.error(error);
+        setSaveStatus('Export failed');
+    }
+});
+
+$('#import-save').on('click', function() {
+    $('#import-save-file').val('');
+    $('#import-save-file').click();
+});
+
+$('#import-save-file').on('change', function(event) {
+    var file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function(loadEvent) {
+        try {
+            var imported = JSON.parse(loadEvent.target.result);
+
+            if (
+                !imported ||
+                imported.format !== SAVE_FORMAT ||
+                imported.version !== SAVE_VERSION ||
+                !isValidImportedState(imported.state)
+            ) {
+                throw new Error('Invalid save file');
+            }
+
+            var confirmed = window.confirm(
+                'Import this save? Your current ranking progress will be replaced.'
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            localStorage.setItem(
+                SAVE_KEY,
+                JSON.stringify(imported.state)
+            );
+
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            setSaveStatus('Invalid save file');
+        }
+    };
+
+    reader.onerror = function() {
+        setSaveStatus('Import failed');
+    };
+
+    reader.readAsText(file);
 });
 
 </script>
