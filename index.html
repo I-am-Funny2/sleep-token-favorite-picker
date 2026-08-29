@@ -57,6 +57,8 @@
         <div class="save-management-actions">
             <button id="export-save">Export Save</button>
             <button id="import-save">Import Save</button>
+		<button id="copy-share-code">Copy Share Code</button>
+		<button id="import-share-code">Import Share Code</button>
 
             <input
                 type="file"
@@ -344,6 +346,161 @@ $('#import-save-file').on('change', function(event) {
     };
 
     reader.readAsText(file);
+});
+
+function bytesToBase64Url(bytes) {
+    var binary = '';
+    var chunkSize = 0x8000;
+
+    for (var i = 0; i < bytes.length; i += chunkSize) {
+        var chunk = bytes.subarray(i, i + chunkSize);
+        binary += String.fromCharCode.apply(null, chunk);
+    }
+
+    return btoa(binary)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
+}
+
+function base64UrlToBytes(value) {
+    var base64 = value
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+    while (base64.length % 4) {
+        base64 += '=';
+    }
+
+    var binary = atob(base64);
+    var bytes = new Uint8Array(binary.length);
+
+    for (var i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+async function compressText(text) {
+    if (!window.CompressionStream) {
+        return null;
+    }
+
+    var stream = new Blob([text])
+        .stream()
+        .pipeThrough(new CompressionStream('gzip'));
+
+    var buffer = await new Response(stream).arrayBuffer();
+
+    return new Uint8Array(buffer);
+}
+
+async function decompressText(bytes) {
+    var stream = new Blob([bytes])
+        .stream()
+        .pipeThrough(new DecompressionStream('gzip'));
+
+    return await new Response(stream).text();
+}
+
+$('#copy-share-code').on('click', async function() {
+    try {
+        var savedState = localStorage.getItem(SAVE_KEY);
+
+        if (!savedState) {
+            setSaveStatus('No save found');
+            return;
+        }
+
+        var savePackage = {
+            format: SAVE_FORMAT,
+            version: SAVE_VERSION,
+            state: JSON.parse(savedState)
+        };
+
+        var json = JSON.stringify(savePackage);
+        var code;
+
+        var compressed = await compressText(json);
+
+        if (compressed) {
+            code = 'ST1G.' + bytesToBase64Url(compressed);
+        } else {
+            var encoded = new TextEncoder().encode(json);
+            code = 'ST1B.' + bytesToBase64Url(encoded);
+        }
+
+        await copyTextToClipboard(code);
+
+        setSaveStatus('Share code copied');
+    } catch (error) {
+        console.error(error);
+        setSaveStatus('Share code failed');
+    }
+});
+
+$('#import-share-code').on('click', async function() {
+    var code = window.prompt(
+        'Paste your Sleep Token share code:'
+    );
+
+    if (!code) {
+        return;
+    }
+
+    try {
+        code = code.trim();
+
+        var json;
+
+        if (code.indexOf('ST1G.') === 0) {
+            if (!window.DecompressionStream) {
+                throw new Error('Compressed share codes are not supported in this browser');
+            }
+
+            var compressedBytes = base64UrlToBytes(code.slice(5));
+            json = await decompressText(compressedBytes);
+
+        } else if (code.indexOf('ST1B.') === 0) {
+
+            var plainBytes = base64UrlToBytes(code.slice(5));
+            json = new TextDecoder().decode(plainBytes);
+
+        } else {
+            throw new Error('Unknown share code format');
+        }
+
+        var imported = JSON.parse(json);
+
+        if (
+            !imported ||
+            imported.format !== SAVE_FORMAT ||
+            imported.version !== SAVE_VERSION ||
+            !isValidImportedState(imported.state)
+        ) {
+            throw new Error('Invalid share code');
+        }
+
+        var confirmed = window.confirm(
+            'Import this share code? Your current ranking progress will be replaced.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        localStorage.setItem(
+            SAVE_KEY,
+            JSON.stringify(imported.state)
+        );
+
+        window.location.reload();
+
+    } catch (error) {
+        console.error(error);
+        setSaveStatus('Invalid share code');
+    }
 });
 
 </script>

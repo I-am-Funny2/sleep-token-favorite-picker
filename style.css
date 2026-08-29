@@ -558,14 +558,18 @@ button.disabled:hover {
 }
 
 #export-save,
-#import-save {
+#import-save,
+#copy-share-code,
+#import-share-code {
     background: #242428;
     color: #e8e5df;
     border: 1px solid #3b3b42;
 }
 
 #export-save:hover,
-#import-save:hover {
+#import-save:hover,
+#copy-share-code:hover,
+#import-share-code:hover {
     background: #333338;
     border-color: #77736b;
 }
