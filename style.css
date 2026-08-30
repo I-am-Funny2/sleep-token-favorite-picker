@@ -707,3 +707,13 @@ button.disabled:hover {
     font-size: 11px;
     line-height: 1.4;
 }
+
+/* A small nod for those who know */
+
+.worship {
+    margin-top: 14px;
+    color: #c8b98a;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+}
