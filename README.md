@@ -31,6 +31,22 @@ https://i-am-funny2.github.io/sleep-token-favorite-picker/
 
 - Responsive desktop and mobile layout
 
+## How to Rank Accurately
+
+For the most consistent results, use the same question throughout the ranking:
+
+> Which song would I rather keep and listen to, taking the whole song and my personal attachment to it into account?
+
+When choosing:
+
+- Select one song if you clearly prefer it.
+- Select multiple songs if they feel effectively tied but stronger than the others shown.
+- Use **Pass** only if you genuinely cannot separate any of the songs in the current group.
+- Avoid ranking based on what you think your results *should* look like.
+- Relisten only when you genuinely cannot remember a song well enough or two songs are extremely close.
+
+The picker builds the final ranking from many smaller preference decisions, so instinctive choices are usually more useful than over-analyzing each comparison.
+
 ## Save & Transfer
 
 Ranking progress is saved automatically in your browser.
