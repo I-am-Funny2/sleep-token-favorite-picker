@@ -671,3 +671,15 @@ button.disabled:hover {
         flex: 1 1 130px;
     }
 }
+
+/* Disabled Export Image button */
+
+#export-image.disabled,
+#export-image:disabled,
+#export-image.disabled:hover,
+#export-image:disabled:hover {
+    background: #242428;
+    color: #66666e;
+    border-color: #2b2b30;
+    cursor: not-allowed;
+}
