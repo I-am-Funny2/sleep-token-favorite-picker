@@ -42,9 +42,12 @@
 <div id="ranking-actions">
 
     <div class="results-actions">
-        <button id="copy-ranking" class="disabled" disabled>Copy Results</button>
-        <span id="copy-status" aria-live="polite"></span>
-    </div>
+    <button id="copy-ranking" class="disabled" disabled>Copy Text</button>
+    <button id="export-image">Export Image</button>
+
+    <span id="copy-status" aria-live="polite"></span>
+    <span id="image-status" aria-live="polite"></span>
+</div>
 
     <div id="save-management">
         <div class="save-management-text">
@@ -522,6 +525,326 @@ $('#confirm-share-code').on('click', async function() {
     } catch (error) {
         console.error(error);
         setSaveStatus('Invalid share code');
+    }
+});
+
+function setImageStatus(message) {
+    $('#image-status').text(message);
+
+    setTimeout(function() {
+        $('#image-status').text('');
+    }, 2500);
+}
+
+function loadCanvasImage(src) {
+    return new Promise(function(resolve) {
+        var img = new Image();
+
+        img.onload = function() {
+            resolve(img);
+        };
+
+        img.onerror = function() {
+            resolve(null);
+        };
+
+        img.src = src;
+    });
+}
+
+function roundRectPath(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+}
+
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+    var words = text.split(' ');
+    var lines = [];
+    var currentLine = '';
+
+    for (var i = 0; i < words.length; i++) {
+        var testLine = currentLine ? currentLine + ' ' + words[i] : words[i];
+
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = words[i];
+
+            if (lines.length === maxLines - 1) {
+                break;
+            }
+        } else {
+            currentLine = testLine;
+        }
+    }
+
+    if (currentLine && lines.length < maxLines) {
+        lines.push(currentLine);
+    }
+
+    var joined = lines.join(' ');
+
+    if (joined !== text && lines.length) {
+        var last = lines[lines.length - 1];
+
+        while (
+            ctx.measureText(last + '…').width > maxWidth &&
+            last.length > 0
+        ) {
+            last = last.slice(0, -1);
+        }
+
+        lines[lines.length - 1] = last + '…';
+    }
+
+    for (var j = 0; j < lines.length; j++) {
+        ctx.fillText(lines[j], x, y + (j * lineHeight));
+    }
+
+    return lines.length;
+}
+
+$('#export-image').on('click', async function() {
+    try {
+        var favorites = myPicker.getFavorites();
+
+        if (!favorites || !favorites.length) {
+            setImageStatus('No results to export');
+            return;
+        }
+
+        var exportItems = favorites.slice(0, 20);
+        var showCount = exportItems.length;
+
+        var columns = showCount > 10 ? 2 : 1;
+        var leftColumnCount =
+            columns === 2 ? Math.ceil(showCount / 2) : showCount;
+
+        var canvasWidth = columns === 2 ? 1600 : 980;
+        var padding = 60;
+        var headerHeight = 150;
+        var rowHeight = 145;
+        var footerHeight = 60;
+        var rows = columns === 2 ? leftColumnCount : showCount;
+
+        var canvasHeight =
+            padding +
+            headerHeight +
+            (rows * rowHeight) +
+            footerHeight;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        var ctx = canvas.getContext('2d');
+
+        /* Background */
+        ctx.fillStyle = '#0b0b0e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        /* Header */
+        ctx.fillStyle = '#e8e5df';
+        ctx.font = 'bold 42px Arial';
+        ctx.fillText('Sleep Token Song Ranker', padding, 70);
+
+        ctx.fillStyle = '#c8b98a';
+        ctx.font = 'bold 22px Arial';
+        ctx.fillText('Current Top ' + showCount, padding, 108);
+
+        ctx.fillStyle = '#9d9991';
+        ctx.font = '18px Arial';
+        ctx.fillText($('#progress').text(), padding, 136);
+
+        ctx.fillStyle = '#2b2b30';
+        ctx.fillRect(
+            padding,
+            158,
+            canvas.width - (padding * 2),
+            2
+        );
+
+        /* Load album artwork */
+        var imageCache = {};
+
+        for (var i = 0; i < exportItems.length; i++) {
+            var src = exportItems[i].image;
+
+            if (src && !imageCache[src]) {
+                imageCache[src] = await loadCanvasImage(src);
+            }
+        }
+
+        function drawRow(item, rank, x, y) {
+            /* Card */
+            roundRectPath(ctx, x, y, 700, 120, 14);
+            ctx.fillStyle = '#141419';
+            ctx.fill();
+
+            ctx.strokeStyle = '#2b2b30';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            /* Rank */
+            roundRectPath(ctx, x + 18, y + 18, 56, 34, 10);
+            ctx.fillStyle = '#c8b98a';
+            ctx.fill();
+
+            ctx.fillStyle = '#111114';
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('#' + rank, x + 30, y + 41);
+
+            /* Artwork */
+            var coverX = x + 92;
+            var coverY = y + 10;
+            var coverSize = 100;
+
+            roundRectPath(
+                ctx,
+                coverX,
+                coverY,
+                coverSize,
+                coverSize,
+                10
+            );
+
+            ctx.fillStyle = '#202026';
+            ctx.fill();
+
+            var img = imageCache[item.image];
+
+            if (img) {
+                ctx.save();
+
+                roundRectPath(
+                    ctx,
+                    coverX,
+                    coverY,
+                    coverSize,
+                    coverSize,
+                    10
+                );
+
+                ctx.clip();
+
+                ctx.drawImage(
+                    img,
+                    coverX,
+                    coverY,
+                    coverSize,
+                    coverSize
+                );
+
+                ctx.restore();
+            }
+
+            /* Song title */
+            var textX = coverX + coverSize + 22;
+            var textY = y + 42;
+            var textWidth = 700 - (textX - x) - 24;
+
+            ctx.fillStyle = '#f1eee8';
+            ctx.font = 'bold 24px Arial';
+
+            var lineCount = drawWrappedText(
+                ctx,
+                item.name,
+                textX,
+                textY,
+                textWidth,
+                28,
+                2
+            );
+
+            /* Album */
+            var albumY =
+                lineCount === 1
+                    ? textY + 34
+                    : textY + 56;
+
+            ctx.fillStyle = '#9d9991';
+            ctx.font = '18px Arial';
+            ctx.fillText(
+                item.album || '',
+                textX,
+                albumY
+            );
+        }
+
+        /* Draw rankings */
+        for (var index = 0; index < exportItems.length; index++) {
+            var item = exportItems[index];
+            var column = 0;
+            var row = index;
+
+            if (columns === 2) {
+                if (index < leftColumnCount) {
+                    column = 0;
+                    row = index;
+                } else {
+                    column = 1;
+                    row = index - leftColumnCount;
+                }
+            }
+
+            var startX = padding + (column * 730);
+            var startY =
+                padding +
+                headerHeight +
+                (row * rowHeight);
+
+            drawRow(
+                item,
+                index + 1,
+                startX,
+                startY
+            );
+        }
+
+        /* Footer */
+        ctx.fillStyle = '#66666e';
+        ctx.font = '16px Arial';
+        ctx.fillText(
+            'Generated from Sleep Token Song Ranker',
+            padding,
+            canvas.height - 20
+        );
+
+        canvas.toBlob(function(blob) {
+            if (!blob) {
+                setImageStatus('Export failed');
+                return;
+            }
+
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+
+            link.href = url;
+            link.download =
+                'sleep-token-top-' +
+                showCount +
+                '.png';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
+
+            setImageStatus('Image exported');
+        }, 'image/png');
+
+    } catch (error) {
+        console.error(error);
+        setImageStatus('Export failed');
     }
 });
 

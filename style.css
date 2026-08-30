@@ -647,3 +647,27 @@ button.disabled:hover {
     background: #333338;
     border-color: #77736b;
 }
+
+/* Export image */
+
+#export-image {
+    background: #242428;
+    color: #e8e5df;
+    border: 1px solid #3b3b42;
+}
+
+#export-image:hover {
+    background: #333338;
+    border-color: #77736b;
+}
+
+#image-status {
+    color: #bdbdc7;
+    font-size: 12px;
+}
+
+@media (max-width: 636px) {
+    .results-actions button {
+        flex: 1 1 130px;
+    }
+}
