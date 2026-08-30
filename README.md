@@ -80,6 +80,8 @@ This project uses and modifies the Favorite Picker sorting engine originally cre
 
 The original picker code is distributed under the MIT License. See [LICENSE](LICENSE).
 
+Development and implementation were assisted by ChatGPT from OpenAI. All project decisions, testing, revisions, and final implementation were reviewed and carried out by the project author.
+
 ## Disclaimer
 
 This is an unofficial fan-made project.
