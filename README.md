@@ -7,33 +7,61 @@ https://i-am-funny2.github.io/sleep-token-favorite-picker/
 
 ## Features
 
+### Ranking
+
 - 59 Sleep Token songs
-- Studio albums, EPs, standalone releases, and officially released covers
 - Pick or pass between randomly presented songs
 - Undo and redo previous choices
-- Ranking progress saved automatically in the browser
-- Export ranking progress as a save file
-- Import a save file to resume a ranking
-- Copy results to the clipboard
 - Final ranked favorites list
-- Responsive desktop and mobile layout
+- Ranking progress saved automatically in the browser
+
+### Sharing Results
+
+- Copy the current ranking as text
+- Export current favorites as a shareable PNG image
+
+### Save & Transfer
+
+- Export ranking progress as a JSON save file
+- Import a save file to resume a ranking
 - Copy a share code to transfer ranking progress through chat or messaging
 - Import a share code to resume another ranking state
+
+### Interface
+
+- Responsive desktop and mobile layout
 
 ## Save & Transfer
 
 Ranking progress is saved automatically in your browser.
 
-There are two ways to move or back up a ranking:
+There are two additional ways to back up or transfer a ranking:
 
-- **Export Save / Import Save** — downloads or restores a JSON save file.
-- **Copy Share Code / Import Share Code** — copies the current ranking state as a compact text code that can be sent through chat, Discord, or another messaging service.
+- **Export Save / Import Save** — downloads or restores the ranking as a JSON save file.
+- **Copy Share Code / Import Share Code** — converts the current ranking state into a compact text code that can be sent through Discord, chat, messaging, or another text-based service.
 
 Both methods restore the ranking session itself, including current progress and unresolved comparisons.
 
 Importing a save or share code replaces the ranking progress currently stored in that browser.
 
-## Included Releases
+## Export Image
+
+Current favorites can be exported as a PNG image for easy sharing.
+
+The exported image includes:
+
+- Current ranking progress
+- Up to the Top 20 favorites
+- Rank numbers
+- Album or release artwork
+- Song titles
+- Album or release names
+
+If fewer than 20 favorites have been ranked, the image includes all currently ranked favorites.
+
+## Included Music
+
+The picker contains 59 Sleep Token songs across:
 
 - One
 - Two
