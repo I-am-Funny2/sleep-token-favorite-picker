@@ -43,7 +43,7 @@
 
     <div class="results-actions">
     <button id="copy-ranking" class="disabled" disabled>Copy Text</button>
-    <button id="export-image">Export Image</button>
+    <button id="export-image" class="disabled" disabled>Export Image</button>
 
     <span id="copy-status" aria-live="polite"></span>
     <span id="image-status" aria-live="polite"></span>
@@ -146,6 +146,10 @@ var pickerUI = new PickerUI(myPicker, {
     $('#copy-ranking')
         .prop('disabled', ranked === 0)
         .toggleClass('disabled', ranked === 0);
+
+	$('#export-image')
+    	.prop('disabled', ranked === 0)
+    	.toggleClass('disabled', ranked === 0);
 },
 
     getItemElem: function(item, settings) {
@@ -795,7 +799,13 @@ $('#export-image').on('click', async function() {
                 }
             }
 
-            var startX = padding + (column * 730);
+            var startX;
+
+if (columns === 1) {
+    startX = (canvasWidth - 700) / 2;
+} else {
+    startX = 80 + (column * 740);
+}
             var startY =
                 padding +
                 headerHeight +
