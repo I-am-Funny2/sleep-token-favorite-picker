@@ -69,6 +69,21 @@
 
             <span id="save-status" aria-live="polite"></span>
         </div>
+		<div id="share-code-import-panel" hidden>
+    			<label for="share-code-input">Paste Share Code</label>
+
+    		<textarea
+       			 id="share-code-input"
+       			 rows="4"
+       		 	spellcheck="false"
+        		placeholder="ST1G..."
+   		 ></textarea>
+
+    		<div class="share-code-import-actions">
+        		<button id="confirm-share-code">Import Code</button>
+        		<button id="cancel-share-code">Cancel</button>
+    </div>
+</div>
     </div>
 
 </div>
@@ -440,18 +455,25 @@ $('#copy-share-code').on('click', async function() {
     }
 });
 
-$('#import-share-code').on('click', async function() {
-    var code = window.prompt(
-        'Paste your Sleep Token share code:'
-    );
+$('#import-share-code').on('click', function() {
+    $('#share-code-import-panel').prop('hidden', false);
+    $('#share-code-input').val('').trigger('focus');
+});
+
+$('#cancel-share-code').on('click', function() {
+    $('#share-code-input').val('');
+    $('#share-code-import-panel').prop('hidden', true);
+});
+
+$('#confirm-share-code').on('click', async function() {
+    var code = $('#share-code-input').val().trim();
 
     if (!code) {
+        setSaveStatus('Paste a share code first');
         return;
     }
 
     try {
-        code = code.trim();
-
         var json;
 
         if (code.indexOf('ST1G.') === 0) {
